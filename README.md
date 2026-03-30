@@ -1,6 +1,6 @@
 # Projeto JackCompiler - Tradutor de Camada de Front-end
 
-Este repositório é dedicado ao desenvolvimento de um compilador para a linguagem **Jack**, conforme proposto na disciplina de Engenharia de Compiladores da UFMA. O objetivo é traduzir o código-fonte Jack para a linguagem de Máquina Virtual (VM).
+Este repositório é dedicado ao desenvolvimento de um compilador para a linguagem **Jack**, conforme proposto na disciplina de Compiladores da UFMA. O objetivo é traduzir o código-fonte Jack para a linguagem de Máquina Virtual (VM).
 
 ## 👥 Equipe
 * **Jamilly Vitoria Ferreira Barbosa**
