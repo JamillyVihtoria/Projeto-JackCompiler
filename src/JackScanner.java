@@ -55,6 +55,20 @@ public class JackScanner {
             readch();
         }
         
+        if (peek == '/') {
+            readch();
+            if (peek == '/') {
+                skipLineComment();
+                return scan();
+            } else if (peek == '*') {
+                skipBlockComment();
+                return scan();
+            } else {
+               
+                return new Token(TokenType.SLASH, "/");
+            }
+        }
+        
         if (Character.isDigit(peek)) return scanNumber();
         
         if (peek == '"') return scanString();
@@ -140,6 +154,28 @@ public class JackScanner {
             case '=' -> TokenType.EQ;
             default  -> throw new RuntimeException("Símbolo desconhecido: " + c);
         };
+    }
+    
+    private void skipLineComment() {
+        while (peek != '\n' && peek != '\0') {
+            readch();
+        }
+    }
+
+    private void skipBlockComment() {
+        readch(); 
+        while (peek != '\0') {
+            if (peek == '*') {
+                readch();
+                if (peek == '/') {
+                    readch(); 
+                    return;
+                }
+            } else {
+                readch();
+            }
+        }
+        throw new RuntimeException("Comentário de bloco /* não fechado");
     }
 
 
