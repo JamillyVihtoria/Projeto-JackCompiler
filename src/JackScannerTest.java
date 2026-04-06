@@ -204,5 +204,57 @@ public class JackScannerTest {
     }
 
 
+    @Test
+    void testCodigoJackCompleto() {
+        String code = """
+            class Main {
+                function void main() {
+                    let x = 5;
+                    return;
+                }
+            }
+            """;
+
+        JackScanner scanner = new JackScanner(code);
+        List<Token> tokens = scanner.tokenize();
+
+        List<String> tags   = tokens.stream().map(t -> t.tag.getXmlTag()).toList();
+        List<String> values = tokens.stream().map(t -> t.value).toList();
+
+        assertTrue(tags.contains("keyword"));
+        assertTrue(tags.contains("identifier"));
+        assertTrue(tags.contains("symbol"));
+        assertTrue(tags.contains("integerConstant"));
+        assertTrue(values.contains("Main"));
+        assertTrue(values.contains("x"));
+        assertTrue(values.contains("5"));
+    }
+
+    @Test
+    void testExpressaoComEscape() {
+        
+        String code = "if (x < 0) { let sign = \"negative\"; }";
+
+        JackScanner scanner = new JackScanner(code);
+        List<Token> tokens = scanner.tokenize()
+            .stream()
+            .filter(t -> t.tag != TokenType.EOF)
+            .toList();
+
+        assertEquals("<keyword> if </keyword>",                     tokens.get(0).toXML());
+        assertEquals("<symbol> ( </symbol>",                        tokens.get(1).toXML());
+        assertEquals("<identifier> x </identifier>",               tokens.get(2).toXML());
+        assertEquals("<symbol> &lt; </symbol>",                     tokens.get(3).toXML()); // < escapado
+        assertEquals("<integerConstant> 0 </integerConstant>",     tokens.get(4).toXML());
+        assertEquals("<symbol> ) </symbol>",                        tokens.get(5).toXML());
+        assertEquals("<symbol> { </symbol>",                        tokens.get(6).toXML());
+        assertEquals("<keyword> let </keyword>",                    tokens.get(7).toXML());
+        assertEquals("<identifier> sign </identifier>",            tokens.get(8).toXML());
+        assertEquals("<symbol> = </symbol>",                        tokens.get(9).toXML());
+        assertEquals("<stringConstant> negative </stringConstant>", tokens.get(10).toXML());
+        assertEquals("<symbol> ; </symbol>",                        tokens.get(11).toXML());
+        assertEquals("<symbol> } </symbol>",                        tokens.get(12).toXML());
+    }
+
 
 }
