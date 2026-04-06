@@ -155,6 +155,54 @@ public class JackScannerTest {
 
         assertEquals("<symbol> &amp; </symbol>", amp.toXML());
     }
+    
+    
+    @Test
+    void testComentarioLinhaIgnorado() {
+        
+        JackScanner scanner = new JackScanner("let x = 5; // isto some");
+        List<Token> tokens = scanner.tokenize()
+            .stream()
+            .filter(t -> t.tag != TokenType.EOF)
+            .toList();
+
+       
+        boolean temComentario = tokens.stream()
+            .anyMatch(t -> t.value.contains("//") || t.value.contains("isto"));
+        assertFalse(temComentario, "Comentário não deveria gerar token");
+
+       
+        List<String> values = tokens.stream().map(t -> t.value).toList();
+        assertTrue(values.contains("let"));
+        assertTrue(values.contains("x"));
+        assertTrue(values.contains("5"));
+    }
+
+    @Test
+    void testComentarioBlocoIgnorado() {
+        JackScanner scanner = new JackScanner("let /* ignora tudo aqui */ x = 1;");
+        List<Token> tokens = scanner.tokenize()
+            .stream()
+            .filter(t -> t.tag != TokenType.EOF)
+            .toList();
+
+        List<String> values = tokens.stream().map(t -> t.value).toList();
+        assertTrue(values.contains("let"));
+        assertTrue(values.contains("x"));
+        assertTrue(values.contains("1"));
+        assertFalse(values.contains("ignora"));
+    }
+
+    @Test
+    void testComentarioJavadocIgnorado() {
+        String code = "/** Descrição da classe */\nclass Main {}";
+        JackScanner scanner = new JackScanner(code);
+        List<Token> tokens = scanner.tokenize();
+
+        assertEquals(TokenType.CLASS, tokens.get(0).tag);
+        assertEquals("class",         tokens.get(0).value);
+    }
+
 
 
 }
