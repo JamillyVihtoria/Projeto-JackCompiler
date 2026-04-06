@@ -53,7 +53,7 @@ public enum TokenType {
         this.xmlTag = xmlTag;
     }
 
-    public String getXmlTag() {
+    public String getXmlTag() { 
         return xmlTag;
     }
 }

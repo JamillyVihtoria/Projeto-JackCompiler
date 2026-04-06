@@ -29,4 +29,24 @@ public class JackScannerTest {
             assertEquals(caso[1], tokens.get(0).toXML(), "Falhou para: " + caso[0]);
         }
     }
+    
+    
+    @Test
+    void testStringBasica() {
+       
+        JackScanner scanner = new JackScanner("\"hello\"");
+        List<Token> tokens = scanner.tokenize();
+
+        assertEquals(TokenType.STRING,  tokens.get(0).tag);
+        assertEquals("hello",           tokens.get(0).value); 
+        assertEquals("<stringConstant> hello </stringConstant>", tokens.get(0).toXML());
+    }
+
+    @Test
+    void testStringComEspacos() {
+        JackScanner scanner = new JackScanner("\"hello world\"");
+        List<Token> tokens = scanner.tokenize();
+
+        assertEquals("<stringConstant> hello world </stringConstant>", tokens.get(0).toXML());
+    }
 }

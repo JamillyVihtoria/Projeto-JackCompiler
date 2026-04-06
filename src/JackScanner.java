@@ -56,6 +56,8 @@ public class JackScanner {
         
         if (Character.isDigit(peek)) return scanNumber();
         
+        if (peek == '"') return scanString();
+        
         if (peek == '\0') return new Token(TokenType.EOF, "");
 
         
@@ -80,6 +82,17 @@ public class JackScanner {
             tokens.add(t);
         } while (t.tag != TokenType.EOF);
         return tokens;
+    }
+    
+    private Token scanString() {
+        readch(); 
+        StringBuilder b = new StringBuilder();
+        while (peek != '"' && peek != '\0') {
+            b.append(peek);
+            readch();
+        }
+        readch(); 
+        return new Token(TokenType.STRING, b.toString());
     }
 
 }
