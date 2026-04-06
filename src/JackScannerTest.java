@@ -1,6 +1,6 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import java.util.List;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
 public class JackScannerTest {
 	
@@ -20,7 +20,7 @@ public class JackScannerTest {
             { "0",     "<integerConstant> 0 </integerConstant>"   },
             { "289",   "<integerConstant> 289 </integerConstant>" },
             { "42",    "<integerConstant> 42 </integerConstant>"  },
-            { " 123 ", "<integerConstant> 123 </integerConstant>" }, 
+            { " 123 ", "<integerConstant> 123 </integerConstant>" }, // com espaços
         };
 
         for (String[] caso : casos) {
@@ -29,7 +29,6 @@ public class JackScannerTest {
             assertEquals(caso[1], tokens.get(0).toXML(), "Falhou para: " + caso[0]);
         }
     }
-    
     
     @Test
     void testStringBasica() {
@@ -49,8 +48,7 @@ public class JackScannerTest {
 
         assertEquals("<stringConstant> hello world </stringConstant>", tokens.get(0).toXML());
     }
-    
-    
+	
     @Test
     void testIdentificadoresEKeywords() {
       
@@ -86,4 +84,77 @@ public class JackScannerTest {
                 "Deveria ser keyword: " + kw);
         }
     }
+    
+    @Test
+    void testIdentificadorComUnderscore() {
+        JackScanner scanner = new JackScanner("minha_var");
+        List<Token> tokens = scanner.tokenize();
+
+        assertEquals(TokenType.IDENT, tokens.get(0).tag);
+        assertEquals("minha_var",     tokens.get(0).value);
+    }
+    
+    
+    @Test
+    void testSimbolosXml() {
+        
+        JackScanner scanner = new JackScanner("x + y;");
+        List<Token> tokens = scanner.tokenize();
+
+       
+        List<Token> semEof = tokens.stream()
+            .filter(t -> t.tag != TokenType.EOF)
+            .toList();
+
+        String[] esperado = {
+            "<identifier> x </identifier>",
+            "<symbol> + </symbol>",
+            "<identifier> y </identifier>",
+            "<symbol> ; </symbol>",
+        };
+
+        for (int i = 0; i < esperado.length; i++) {
+            assertEquals(esperado[i], semEof.get(i).toXML(),
+                "Token " + i + " não corresponde");
+        }
+    }
+
+    @Test
+    void testEscapeXml() {
+        
+        JackScanner scanner = new JackScanner("a < b");
+        List<Token> tokens = scanner.tokenize();
+
+        
+        Token lt = tokens.stream()
+            .filter(t -> t.value.equals("<"))
+            .findFirst()
+            .orElseThrow();
+
+        assertEquals("<symbol> &lt; </symbol>", lt.toXML());
+
+        
+        scanner = new JackScanner("a > b");
+        tokens  = scanner.tokenize();
+
+        Token gt = tokens.stream()
+            .filter(t -> t.value.equals(">"))
+            .findFirst()
+            .orElseThrow();
+
+        assertEquals("<symbol> &gt; </symbol>", gt.toXML());
+
+        
+        scanner = new JackScanner("a & b");
+        tokens  = scanner.tokenize();
+
+        Token amp = tokens.stream()
+            .filter(t -> t.value.equals("&"))
+            .findFirst()
+            .orElseThrow();
+
+        assertEquals("<symbol> &amp; </symbol>", amp.toXML());
+    }
+
+
 }
