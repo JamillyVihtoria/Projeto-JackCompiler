@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +47,8 @@ public class JackScanner {
     private void readch() {
         peek = (pos < input.length()) ? input.charAt(pos++) : '\0';
     }
-    
- public Token scan() {
+
+    public Token scan() {
 
         
         while (peek == ' ' || peek == '\t' || peek == '\r' || peek == '\n') {
@@ -58,7 +59,9 @@ public class JackScanner {
         
         if (peek == '"') return scanString();
         
-        if (Character.isLetter(peek) || peek == '_') return scanIdentifier();
+        if (Character.isLetter(peek) || peek == '_') return scanIdentifier(); 
+        
+        if (SYMBOL_CHARS.indexOf(peek) != -1) return scanSymbol();
         
         if (peek == '\0') return new Token(TokenType.EOF, "");
 
@@ -96,7 +99,7 @@ public class JackScanner {
         readch(); 
         return new Token(TokenType.STRING, b.toString());
     }
-    
+
     private Token scanIdentifier() {
         StringBuilder b = new StringBuilder();
         do {
@@ -108,6 +111,36 @@ public class JackScanner {
         TokenType type = keywords.getOrDefault(lexeme, TokenType.IDENT);
         return new Token(type, lexeme);
     }
-   
+    
+    private Token scanSymbol() {
+        Token t = new Token(getSymbolType(peek), String.valueOf(peek));
+        readch(); 
+        return t;
+    }
+    
+    private TokenType getSymbolType(char c) {
+        return switch (c) {
+            case '(' -> TokenType.LPAREN;
+            case ')' -> TokenType.RPAREN;
+            case '{' -> TokenType.LBRACE;
+            case '}' -> TokenType.RBRACE;
+            case '[' -> TokenType.LBRACKET;
+            case ']' -> TokenType.RBRACKET;
+            case ',' -> TokenType.COMMA;
+            case ';' -> TokenType.SEMICOLON;
+            case '.' -> TokenType.DOT;
+            case '+' -> TokenType.PLUS;
+            case '-' -> TokenType.MINUS;
+            case '*' -> TokenType.ASTERISK;
+            case '&' -> TokenType.AND;
+            case '|' -> TokenType.OR;
+            case '~' -> TokenType.NOT;
+            case '<' -> TokenType.LT;
+            case '>' -> TokenType.GT;
+            case '=' -> TokenType.EQ;
+            default  -> throw new RuntimeException("Símbolo desconhecido: " + c);
+        };
+    }
+
 
 }
