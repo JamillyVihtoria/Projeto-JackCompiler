@@ -58,6 +58,8 @@ public class JackScanner {
         
         if (peek == '"') return scanString();
         
+        if (Character.isLetter(peek) || peek == '_') return scanIdentifier();
+        
         if (peek == '\0') return new Token(TokenType.EOF, "");
 
         
@@ -94,5 +96,18 @@ public class JackScanner {
         readch(); 
         return new Token(TokenType.STRING, b.toString());
     }
+    
+    private Token scanIdentifier() {
+        StringBuilder b = new StringBuilder();
+        do {
+            b.append(peek);
+            readch();
+        } while (Character.isLetterOrDigit(peek) || peek == '_');
+
+        String lexeme = b.toString();
+        TokenType type = keywords.getOrDefault(lexeme, TokenType.IDENT);
+        return new Token(type, lexeme);
+    }
+   
 
 }

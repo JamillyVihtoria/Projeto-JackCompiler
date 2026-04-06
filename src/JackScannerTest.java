@@ -49,4 +49,41 @@ public class JackScannerTest {
 
         assertEquals("<stringConstant> hello world </stringConstant>", tokens.get(0).toXML());
     }
+    
+    
+    @Test
+    void testIdentificadoresEKeywords() {
+      
+        JackScanner scanner = new JackScanner("minhaVar123");
+        List<Token> tokens = scanner.tokenize();
+
+        assertEquals(TokenType.IDENT,  tokens.get(0).tag);
+        assertEquals("minhaVar123",    tokens.get(0).value);
+        assertEquals("<identifier> minhaVar123 </identifier>", tokens.get(0).toXML());
+
+      
+        scanner = new JackScanner("function");
+        tokens  = scanner.tokenize();
+
+        assertEquals(TokenType.FUNCTION, tokens.get(0).tag);
+        assertEquals("function",         tokens.get(0).value);
+        assertEquals("<keyword> function </keyword>", tokens.get(0).toXML());
+    }
+
+    @Test
+    void testTodasAsKeywords() {
+
+        String[] kws = {
+            "class", "constructor", "function", "method", "field", "static",
+            "var", "int", "char", "boolean", "void", "true", "false", "null",
+            "this", "let", "do", "if", "else", "while", "return"
+        };
+
+        for (String kw : kws) {
+            JackScanner scanner = new JackScanner(kw);
+            List<Token> tokens = scanner.tokenize();
+            assertEquals("keyword", tokens.get(0).tag.getXmlTag(),
+                "Deveria ser keyword: " + kw);
+        }
+    }
 }
