@@ -9,7 +9,8 @@ public class JackScanner {
 
     private final String input;
     private int  pos  = 0;
-    private char peek = ' ';   
+    private char peek = ' ';  
+    private int  line = 1; 
     private final Map<String, TokenType> keywords = new HashMap<>();
 
     private static final String SYMBOL_CHARS = "{}()[].,;+-*/&|<>=~";
@@ -45,7 +46,13 @@ public class JackScanner {
 
     
     private void readch() {
-        peek = (pos < input.length()) ? input.charAt(pos++) : '\0';
+    	 if (pos < input.length()) {
+             if (peek == '\n') line++;
+             peek = input.charAt(pos++);
+         } else {
+             peek = '\0';
+         }
+
     }
 
     public Token scan() {
@@ -80,7 +87,7 @@ public class JackScanner {
         if (peek == '\0') return new Token(TokenType.EOF, "");
 
         
-        throw new RuntimeException("Token não reconhecido: '" + peek + "'");
+        throw new RuntimeException("Erro léxico na linha " + line + ": caractere inesperado '" + peek + "'");
     }
 
     private Token scanNumber() {
@@ -152,7 +159,7 @@ public class JackScanner {
             case '<' -> TokenType.LT;
             case '>' -> TokenType.GT;
             case '=' -> TokenType.EQ;
-            default  -> throw new RuntimeException("Símbolo desconhecido: " + c);
+            default  -> throw new RuntimeException("Erro léxico na linha " + line + ": símbolo desconhecido '" + c + "'");
         };
     }
     
@@ -175,7 +182,7 @@ public class JackScanner {
                 readch();
             }
         }
-        throw new RuntimeException("Comentário de bloco /* não fechado");
+        throw new RuntimeException("Erro léxico na linha " + line + ": comentário de bloco /* não fechado");
     }
 
 
