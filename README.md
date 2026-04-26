@@ -1,4 +1,4 @@
-# Projeto JackCompiler - Analisador Léxico
+# Projeto JackCompiler - Analisador Léxico e Sintático
 
 Este repositório contém a implementação de um *analisador léxico  e Analisador sintático * para a linguagem *Jack*, como parte da disciplina de Compiladores. O objetivo desta etapa é identificar e classificar os tokens do código-fonte Jack.
 
