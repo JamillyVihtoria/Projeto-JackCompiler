@@ -1,27 +1,47 @@
 # Projeto JackCompiler - Analisador Léxico
 
-Este repositório é dedicado ao desenvolvimento de um compilador para a linguagem *Jack*, conforme proposto na disciplina de Compiladores da UFMA. O objetivo é traduzir o código-fonte Jack para a linguagem de Máquina Virtual (VM).
+Este repositório contém a implementação de um *analisador léxico  e Analisador sintático * para a linguagem *Jack*, como parte da disciplina de Compiladores. O objetivo desta etapa é identificar e classificar os tokens do código-fonte Jack.
+
+---
+
+## 🎓 Informações Acadêmicas
+
+* **Instituição:** Universidade Federal do Maranhão (UFMA)
+* **Curso:** Engenharia da Computação – CCET
+* **Professor:** Sergio Souza Costa
+
+---
 
 ## 👥 Equipe
-* *Jamilly Vitoria Ferreira Barbosa*
-  * Matrícula: 20250071213
-* *Marcos Vinicius Jansem Oliveira*
-  * Matrícula: 20250071278 
+
+* **Jamilly Vitoria Ferreira Barbosa**
+  Matrícula: 20250071213
+
+* **Marcos Vinicius Jansem Oliveira**
+  Matrícula: 20250071278
+
+---
 
 ## 🛠️ Tecnologias Utilizadas
-* *Linguagem de Programação:* Java
+
+* **Linguagem:** Java
+* **Framework de Testes:** JUnit 5
+
+---
 
 ## 📁 Estrutura do Projeto
 
-```
+```text
 CompiladorJack/
 ├── src/
-│   ├── Main.java             # Ponto de entrada
-│   ├── JackScanner.java      # Analisador léxico 
-│   ├── Token.java            # Representa um token
-│   ├── TokenType.java        # Enum com os tipos de token
-│   ├── XMLGenerator.java     # Gera o arquivo XML de saída
-│   └── JackScannerTest.java  # Testes unitários (JUnit 5)
+│   ├── Main.java             # Ponto de entrada da aplicação
+│   ├── JackScanner.java      # Analisador léxico (Tokenizer)
+│   ├── Token.java            # Classe que representa um token
+│   ├── TokenType.java        # Enumeração dos tipos de tokens
+│   ├── XMLGenerator.java     # Responsável pela geração do XML
+│   ├──JackScannerTest.java  # Testes unitários (JUnit 5)
+│   └── ParserTest.java  # Testes unitários (JUnit 5)
+
 ├── tests/
 │   ├── Main.jack
 │   ├── Square.jack
@@ -33,47 +53,92 @@ CompiladorJack/
 
 ---
 
-## ▶️ Como rodar no Spring Tools for Eclipse (STS)
+## ▶️ Como Compilar e Executar
 
-### Importar o projeto
+### 🧰 Via Spring Tools Suite (STS / Eclipse)
 
-1. Abra o STS
-2. `File` → `Import` → `General` → `Existing Projects into Workspace`
+#### Importar o projeto
+
+1. `File` → `Import`
+2. `General` → `Existing Projects into Workspace`
 3. Selecione a pasta `CompiladorJack`
 4. Clique em `Finish`
 
-### Rodar o Main
+#### Executar o programa
 
 1. Clique com botão direito em `Main.java`
 2. `Run As` → `Run Configurations`
-3. Na aba **Arguments**, em **Program arguments**, coloque:
-   ```
-   tests/Main.jack
-   ```
-   Ou para processar todos de uma vez:
-   ```
-   tests
-   ```
-4. Clique em `Run`
+3. Na aba **Arguments**, em **Program arguments**, insira:
 
-O XML gerado aparece na pasta `tests/`:
+* Para um arquivo:
+
+```text
+tests/Main.jack
 ```
-tests/MainT.xml
-tests/SquareT.xml
-tests/SquareGameT.xml
+
+* Para um diretório:
+
+```text
+tests
 ```
+
+4. Clique em `Run`
 
 ---
 
-## 🧪 Como rodar os testes (JUnit 5)
+## 📄 Saída e Validação
 
-### Adicionar JUnit 5 ao projeto
+* **Formato de saída:** XML
 
-1. Clique com botão direito no projeto → `Build Path` → `Add Libraries`
-2. Selecione `JUnit` → `Next`
-3. Escolha **JUnit 5** → `Finish`
+* **Nome do arquivo gerado:**
+  Mantém o nome original com sufixo `T.xml` e `P.xml`
+  Exemplo:
 
-### Rodar os testes
+  ```
+  Main.jack → MainT.xml (Analisador Léxico)
+  Main.jack → MainP.xml (Analisador sintático)
+  ```
+
+* **Localização:** Mesmo diretório do arquivo de entrada
+
+* **Validação:**
+  Os arquivos gerados foram comparados com os arquivos oficiais utilizando a ferramenta **TextComparer**, apresentando **100% de correspondência**.
+
+---
+
+## 🧗 Desafios Enfrentados
+
+Durante o desenvolvimento do analisador léxico, alguns pontos exigiram maior atenção:
+
+* **Tratamento de comentários:**
+
+  * Comentários de linha (`//`)
+  * Comentários de múltiplas linhas (`/* ... */`)
+  * Comentários de documentação (`/** ... */`)
+
+* **Ignorar corretamente espaços em branco** sem perder a posição dos tokens.
+
+* **Escape de caracteres especiais no XML:**
+
+  * `<`, `>`, `&`, `"`
+
+* **Reconhecimento preciso de tokens**, evitando ambiguidades entre identificadores e palavras-chave.
+
+Esses desafios foram fundamentais para garantir a robustez do analisador.
+
+---
+
+## 🧪 Testes (JUnit 5)
+
+### Adicionar JUnit ao projeto
+
+1. Clique com botão direito no projeto
+2. `Build Path` → `Add Libraries`
+3. Selecione `JUnit`
+4. Escolha **JUnit 5**
+5. Clique em `Finish`
+
+### Executar testes
 
 1. Clique com botão direito em `JackScannerTest.java`
 2. `Run As` → `JUnit Test`
@@ -82,38 +147,34 @@ tests/SquareGameT.xml
 
 ## 📌 Tokens Reconhecidos
 
-| Tipo | Exemplos |
-|------|---------|
-| `keyword` | `class`, `int`, `while`, `return` |
-| `symbol` | `{`, `}`, `+`, `-`, `<`, `>` |
-| `integerConstant` | `0`, `42`, `255` |
-| `stringConstant` | `"hello"`, `"Jack"` |
-| `identifier` | `x`, `Square`, `moveUp` |
+| Tipo              | Exemplos                              |
+| ----------------- | ------------------------------------- |
+| `keyword`         | class, int, while, return             |
+| `symbol`          | { } ( ) [ ] . , ; + - * / & | < > = ~ |
+| `integerConstant` | 0, 42, 255                            |
+| `stringConstant`  | "hello", "Jack"                       |
+| `identifier`      | x, Square, moveUp                     |
 
 ---
 
 ## 📄 Formato da Saída XML
 
+Cada token é encapsulado em sua respectiva tag:
+
 ```xml
 <tokens>
-<keyword> class </keyword>
-<identifier> Main </identifier>
-<symbol> { </symbol>
-...
+  <keyword> class </keyword>
+  <identifier> Main </identifier>
+  <symbol> { </symbol>
+  ...
 </tokens>
 ```
 
-Caracteres especiais são escapados:
+### 🔐 Escape de Caracteres Especiais
 
-| Caractere | Escape |
-|-----------|--------|
-| `&` | `&amp;` |
-| `<` | `&lt;` |
-| `>` | `&gt;` |
-| `"` | `&quot;` |
-EOF
-echo "ok"
-
-*Curso:* Engenharia da Computação - CCET - UFMA
-
-*Curso:* Sergio Souza Costa
+| Caractere | Representação XML |
+| --------- | ----------------- |
+| &         | &                 |
+| <         | <                 |
+| >         | >                 |
+| "         | "                 |
