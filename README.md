@@ -36,6 +36,7 @@ CompiladorJack/
 ├── src/
 │   ├── Main.java             # Ponto de entrada da aplicação
 │   ├── JackScanner.java      # Analisador léxico (Tokenizer)
+│   ├── Parser.java           # Analisador Sintaático 
 │   ├── Token.java            # Classe que representa um token
 │   ├── TokenType.java        # Enumeração dos tipos de tokens
 │   ├── XMLGenerator.java     # Responsável pela geração do XML
